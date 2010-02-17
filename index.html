@@ -1,0 +1,122 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <title>jCaps plugin example</title>
+    <meta charset=utf-8>
+        
+    <link href="styles.css" rel="stylesheet" />    
+    
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.js"></script>
+    <script src="jquery.jcap.js"></script>
+    
+    <script>
+        $(function(){
+            
+            $("#myVid").jCaps({
+                transcriptsDiv: $('#transcripts'),
+                language: $('select[name="changeLang"]').val()
+            });
+            
+            $('#toggleCaptions').click(function(){
+                $('#myVid').jCaps.toggle();
+            });
+            
+            $('#switchOn').click(function(){
+                $('#myVid').jCaps.switchOn();
+            })
+            
+            $('#switchOff').click(function(){
+                $('#myVid').jCaps.switchOff();
+            })
+            
+            $('select[name="changeLang"]').change(function(){
+                $('#myVid').jCaps.switchLanguage($(this).val());
+            });
+            
+        })
+        
+    </script>
+</head>
+<body>    
+    <form>
+        <fieldset>
+            <input type="button" id="toggleCaptions" value="toggle captions" />
+            <input type="button" id="switchOn" value="switch subtitles on" />
+            <input type="button" id="switchOff" value="switch subtitles off" />
+            
+        </fieldset>
+        <fieldset>
+            <select name="changeLang">
+                <option value="en">English</option>
+                <option value="ja">Japanese</option>
+            </select>
+        </fieldset>
+    </form>
+    
+    <video id="myVid" width="400" src="leverage-a-synergy.ogv" autobuffer controls> 
+	<p>This page is to demonstrate open HTML5 video, so if you're not using a browser that can display the open Ogg Theora codec, there's not much to see. Sorry!</p> 
+    </video>
+
+    
+    <div id="transcripts"> 
+		<div lang="en"> 
+			<h3>Transcript</h3> 
+			<p> 
+			<span data-begin=1 data-end=6>Hi, my name's Dr Archimedes Einstein and I'm a Doctor of Science at the University of Science</span> 
+			<span data-begin=6 data-end=9>in a very famous town that you're too stupid to have heard of.</span> 
+			<span data-begin=9.5 data-end=11.5>Anyway, today we're going to talk about "synergies".</span> 
+			<span data-begin=12 data-end=15>A lot of people are worried about synergies, but I can tell you that</span> 
+			<span data-begin=15 data-end=16>statistics show</span> 
+			<span data-begin=16 data-end=19>there is no danger of increased cancer risk from synergies.</span> 
+			<span data-begin=19.5 data-end=21.5>However, it's better to be safe than sorry.</span> 
+			<span data-begin=22 data-end=25> I'm going to demonstrate how you how we can leverage a synergy.</span> 
+			</p> 
+			<p> 
+			<span data-begin=25 data-end=26.5>First of all, I've got this banana</span> 
+			<span data-begin=26.5 data-end=29>This banana represents "Web 2.0" and look,</span> 
+			<span data-begin=29 data-end=32>I've written on it some "user-generated content"</span> 
+			<span data-begin=32 data-end=34>just to prove the point [LOL, WTF, You suck]</span> 
+			<span data-begin=34 data-end=37>I take my "Web 2.0" and I put it in an envelope</span> 
+			<span data-begin=37 data-end=39>marked "paradigm shift".</span> 
+			<span data-begin=39 data-end=44>OK. Very important, I put the envelope down and</span> 
+			<span data-begin=44.5 data-end=46>With a bit of "blue sky thinking"</span> 
+			<span data-begin=46.4 data-end=48>I "push the envelope"</span> 
+			<span data-begin=48 data-end=50>Then, I take my leverage mallet, and</span> 
+			<span data-begin=50.3 data-end=51>URGH!</span> 
+			<span data-begin=51 data-end=52>RGRRRRRARGRGGH!!</span> 
+			<span data-begin=52 data-end=53>EURGGGARRRRGGGRRGARGGAHAARRAGGHGRRAGAHAARGH!!!!</span> 
+			<span data-begin=52 data-end=56.5>...and there we can see a synergy, leveraged.</span> 
+			</p> 
+		</div> 
+		<div lang="ja"> 
+			<h3>字幕</h3> 
+			<p> 
+			<span data-begin=1 data-end=6>こんにちは。科学大学の科学博士のアルキメデス・アインシュタインです。</span> 
+			<span data-begin=6 data-end=9>大学は有名な町にあります。聞いたことないと思うけど…</span> 
+			<span data-begin=9.5 data-end=11.5>今日は「シナージー」について講義してあげましょう。</span> 
+			<span data-begin=12 data-end=15>シナージーのことを気にかけている人が多いようですが、</span> 
+			<span data-begin=15 data-end=16>統計によると</span> 
+			<span data-begin=16 data-end=19>シナージーのせいで癌になるリスクは一切ありません。</span> 
+			<span data-begin=19.5 data-end=21.5>しかし、念のため</span> 
+			<span data-begin=22 data-end=25>シナージーをどうやって「レバレッジ」するか説明させていただきます。</span> 
+			</p> 
+			<p> 
+			<span data-begin=25 data-end=26.5>まず、バナナを用意します。</span> 
+			<span data-begin=26.5 data-end=29>このバナナは「Web 2.0」を表しています。</span> 
+			<span data-begin=29 data-end=32>それを示すために、いわゆるユーザのコメントを</span> 
+			<span data-begin=32 data-end=34>例として書きました。 [LOL, WTF, You suck]</span> 
+			<span data-begin=34 data-end=37>次は「Web 2.0」を封筒（エンベロープ）に入れます。</span> 
+			<span data-begin=37 data-end=39>封筒の名前は「パラダイムシフト」です。</span> 
+			<span data-begin=39 data-end=44>OK. 次が重要です。封筒をテーブルに置いて</span> 
+			<span data-begin=44.5 data-end=46>「blue sky thinking」を利用しながら</span> 
+			<span data-begin=46.4 data-end=48>「push the envelope」をします。</span> 
+			<span data-begin=48 data-end=50>それからレバレッジのハンマーを使って</span> 
+			<span data-begin=50.3 data-end=51>オリャー！</span> 
+			<span data-begin=51 data-end=52>RGRRRRRARGRGGH!!（翻訳不可）</span> 
+			<span data-begin=52 data-end=53>EURGGGARRRRGGGRRGARGGAHAARRAGGHGRRAGAHAARGH!!!!（更に翻訳不可）</span> 
+			<span data-begin=52 data-end=56.5>そうするとシナジーのレバレッジがうまくできました。以上。</span> 
+			</p> 
+		</div> 
+	</div> 
+</body>
+</html>
