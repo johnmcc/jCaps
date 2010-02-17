@@ -1,6 +1,18 @@
 <!DOCTYPE HTML>
 <html lang="en">
 <head>
+    <!--
+    * jCaps - jQuery plugin for caption support in HTML5 video.
+    * Based on an implementation by Bruce Lawson, Philip Jägenstedt, and Daniel Davis:
+    * http://dev.opera.com/articles/view/accessible-html5-video-with-javascripted-captions/
+    *
+    * http://www.360innovate.co.uk / John McCollum
+    *
+    * Licensed under the Creative Commons BSD Licence, as per original work
+    * http://creativecommons.org/licenses/BSD/
+    *
+    * Version: 0.1
+    -->
     <title>jCaps plugin example</title>
     <meta charset=utf-8>
         
@@ -23,12 +35,16 @@
             
             $('#switchOn').click(function(){
                 $('#myVid').jCaps.switchOn();
-            })
+            });
             
             $('#switchOff').click(function(){
                 $('#myVid').jCaps.switchOff();
-            })
+            });
             
+	    $('#transcript').click(function(){
+		$('#myVid').jCaps.swapOut();
+	    });
+	    
             $('select[name="changeLang"]').change(function(){
                 $('#myVid').jCaps.switchLanguage($(this).val());
             });
@@ -37,13 +53,20 @@
         
     </script>
 </head>
-<body>    
+<body>
+    <h1>HTML5 Video with JavaScripted synchronised captions: demo</h1>
+    <p>If your browser has JavaScript enabled, synchronised captions will appear on the Video. Otherwise, a plaintext transcript with time markers will display below it.</p>
+    
+    <p>This demonstration supplements the <a href="#">360innovate blog post</a>, and builds on work by Bruce Lawson, Philip Jägenstedt, and Daniel Davis. It reimplements their work as a jQuery plugin which aims to give front-end developers a consistent and easy to use API.</p>
+    <div>
+	
+    </div>
     <form>
         <fieldset>
             <input type="button" id="toggleCaptions" value="toggle captions" />
             <input type="button" id="switchOn" value="switch subtitles on" />
             <input type="button" id="switchOff" value="switch subtitles off" />
-            
+            <input type="button" id="transcript" value="show transcript" />
         </fieldset>
         <fieldset>
             <select name="changeLang">
