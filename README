@@ -1,0 +1,10 @@
+jCaps - jQuery plugin for caption support in HTML5 video.
+Based on an implementation by Bruce Lawson, Philip Jägenstedt, and Daniel Davis:
+http://dev.opera.com/articles/view/accessible-html5-video-with-javascripted-captions/
+
+http://www.360innovate.co.uk / John McCollum
+
+Licensed under the Creative Commons BSD Licence, as per original work
+http://creativecommons.org/licenses/BSD/
+
+Version: 0.1
