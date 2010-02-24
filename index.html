@@ -26,29 +26,24 @@
             
             $("#myVid").jCaps({
                 transcriptsDiv: $('#transcripts'),
-                language: $('select[name="changeLang"]').val()
+                showLanguageDropdown: true
             });
             
             $('#toggleCaptions').click(function(){
-                $('#myVid').jCaps.toggle();
+                $('#myVid').jCaps('toggle');
             });
             
             $('#switchOn').click(function(){
-                $('#myVid').jCaps.switchOn();
+                $('#myVid').jCaps('switchOn');
             });
             
             $('#switchOff').click(function(){
-                $('#myVid').jCaps.switchOff();
+                $('#myVid').jCaps('switchOff');
             });
             
-	    $('#transcript').click(function(){
-		$('#myVid').jCaps.swapOut();
-	    });
-	    
-            $('select[name="changeLang"]').change(function(){
-                $('#myVid').jCaps.switchLanguage($(this).val());
+            $('#transcript').click(function(){
+                $('#myVid').jCaps('swapOut');
             });
-            
         })
         
     </script>
@@ -67,12 +62,6 @@
             <input type="button" id="switchOn" value="switch subtitles on" />
             <input type="button" id="switchOff" value="switch subtitles off" />
             <input type="button" id="transcript" value="show transcript" />
-        </fieldset>
-        <fieldset>
-            <select name="changeLang">
-                <option value="en">English</option>
-                <option value="ja">Japanese</option>
-            </select>
         </fieldset>
     </form>
     
