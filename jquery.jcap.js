@@ -411,22 +411,32 @@
             var context = $(this);
             
             context.css('position', 'relative');
+            
+            var wrapper = $('<div/>', { id: 'jCapsWrapper', css: {position: 'relative', display: 'inline'}});
+            context.wrap(wrapper);
+            
             if(!$('div#captions').length){
                 var div = $('<div/>', {
                     id: 'captions',
                     width: this.width,
-                    css: {display: 'none'}
+                    css: {display: 'none', position: 'absolute', top: '15px', opacity: 0.7}
                 });
                 $('<p>').appendTo(div);
-                context.after(div);
+                div.appendTo($('#jCapsWrapper'));
             }
             
             context.bind('timeupdate', function(){
                 var now = this.currentTime;
+                var currentText = '';
+                
                 $.each(captions, function(i, captionSet){
                     if(now >= captionSet[1] && now <= captionSet[2]){
-                        $('#captions').text(captionSet[0]);
-                        return true;
+                        var newText = captionSet[0];
+                        if(newText !== currentText){
+                            currentText = newText;
+                            $('#captions').text(newText);
+                            return true;
+                        }
                     }
                 });
                 
