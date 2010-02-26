@@ -23,26 +23,9 @@
     
     <script>
         $(function(){
-            
             $("#myVid").jCaps({
                 transcriptsDiv: $('#transcripts'),
-                showLanguageDropdown: true
-            });
-            
-            $('#toggleCaptions').click(function(){
-                $('#myVid').jCaps('toggle');
-            });
-            
-            $('#switchOn').click(function(){
-                $('#myVid').jCaps('switchOn');
-            });
-            
-            $('#switchOff').click(function(){
-                $('#myVid').jCaps('switchOff');
-            });
-            
-            $('#transcript').click(function(){
-                $('#myVid').jCaps('swapOut');
+                languageChooser: true
             });
         })
         
@@ -56,14 +39,6 @@
     <div>
 	
     </div>
-    <form>
-        <fieldset>
-            <input type="button" id="toggleCaptions" value="toggle captions" />
-            <input type="button" id="switchOn" value="switch subtitles on" />
-            <input type="button" id="switchOff" value="switch subtitles off" />
-            <input type="button" id="transcript" value="show transcript" />
-        </fieldset>
-    </form>
     
     <video id="myVid" width="400" src="leverage-a-synergy.ogv" autobuffer controls> 
 	<p>This page is to demonstrate open HTML5 video, so if you're not using a browser that can display the open Ogg Theora codec, there's not much to see. Sorry!</p> 

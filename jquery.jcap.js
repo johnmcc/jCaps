@@ -12,16 +12,6 @@
  */
 
 (function($){
-    
-    var config = {
-        transcriptsDiv: null, // pass a jQuery element as stated in the docs
-        showLanguageDropdown: false,
-        language: $('html').attr('lang'), // should refer to a child div of the above element, with a lang attribute
-        showCaptions: false, // Captions are hidden by default, must be explicitly turned on
-        switchOnCallback: function(){}, // called immediately after subtitles are switched on
-        switchOffCallback: function(){} // called immediately after subtitles are switched off
-    };    
-    
     var captions = [];
     
     var languages = {
@@ -299,20 +289,82 @@
         "zh-xiang": "Xiang",
         "zu": "Zulu"
     };
+    
+    var config = {
+        transcriptsDiv: null, // pass a jQuery element as stated in the docs
+        language: $('html').attr('lang'), // should refer to a child div of the above element, with a lang attribute
+        languageChooser: true,
+        interfaceImg: 'speechbubble.gif',
+        toggleButton: true,
+        onButton: true,
+        offButton: true,
+        transcriptButton: true,
+        showCaptions: false, // Captions are hidden by default, must be explicitly turned on
+        switchOnCallback: function(){}, // called immediately after subtitles are switched on
+        switchOffCallback: function(){} // called immediately after subtitles are switched off
+    };    
+    
+
 
     $.jCaps_plugin = {
         _init: function(){
             var context = $(this);
-            if(config.showLanguageDropdown){
-                var dropdown = $.jCaps_plugin._getDropdown();
-                context.before(dropdown);
+            var interfaceDiv = $.jCaps_plugin._getInterfaceDiv();
+            
+            if(config.languageChooser){
+                var langDropdown = $.jCaps_plugin._getLanguageDropdown();
+                interfaceDiv.append(langDropdown);
+            }
+
+            if(config.toggleButton){
+                var toggleButton = $.jCaps_plugin._getToggleButton();
+                interfaceDiv.append(toggleButton);
             }
             
-            if(config.transcriptsDiv !== null){
-                if(config.transcriptsDiv.attr('id')){
-                    context.attr('aria-describedby', config.transcriptsDiv.attr('id'));
+            if(config.onButton){
+                var onButton = $.jCaps_plugin._getOnButton();
+                interfaceDiv.append(onButton);
+            }
+            
+            if(config.offButton){
+                var offButton = $.jCaps_plugin._getOffButton();
+                interfaceDiv.append(offButton);
+            }
+            
+            context.after(interfaceDiv).show();
+            
+            $.jCaps_plugin._appendAria(context);
+            
+            return $.jCaps_plugin._getCaptions();
+        },
+        
+        _getInterfaceDiv: function(){
+            var showhide = $('<a/>', {
+                css: {
+                    width: '60px',
+                    background: 'url(' + config.interfaceImg + ') no-repeat center left',
+                    paddingLeft: '30px'
                 }
-                
+            }).toggle(
+                function(){
+                    $(this).next('div').stop().fadeIn(1000);
+                    $(this).stop().show();
+                },
+                function(){
+                    $(this).next('div').stop().fadeIn(500);
+                    $(this).stop().hide();
+                }
+            );
+            
+            var interfaceDiv = $('<div/>', {
+                id: 'jCapsInterface'
+            }).after(showhide);
+            
+            return showhide;
+        },
+        
+        _getCaptions: function(){
+            if(config.transcriptsDiv !== null){    
                 config.transcriptsDiv.hide();
                 var spans = $(config.transcriptsDiv).children('div[lang="' + config.language + '"]').find('span');
                 for(i=0; i<spans.length; ++i){
@@ -325,17 +377,77 @@
                 
                 return captions;
             }
+            
             return false;
         },
         
-        _getDropdown: function(){
+        _appendAria: function(context){
+            if(config.transcriptsDiv.attr('id')){
+                var ids = [];
+                var langDivs = config.transcriptsDiv.children('div');
+                $.each(langDivs, function(i, div){
+                    div = $(div);
+                    if(!div.attr('id')){
+                        var newId = languages[div.attr('lang')] + "_language_transcript";
+                        div.attr('id', newId);
+                    }else{
+                        var newId = div.attr('id');
+                    }
+                    
+                    ids.push(newId);
+                });
+                context.attr('aria-describedby', ids.join(' '));
+            }
+        },
+        
+        _getOnButton: function(){
+            var onButton = $('<a/>', {
+                href: '#',
+                text: 'switch on',
+                css: {display: 'none'},
+                click: function(event){
+                    event.preventDefault();
+                    $.jCaps_plugin.switchOn();
+                }
+            });
+            return onButton;
+        },
+        
+        _getOffButton: function(){
+            var offButton = $('<a/>', {
+                href: '#',
+                text: 'switch off',
+                css: {display: 'none'},
+                click: function(event){
+                    event.preventDefault();
+                    $.jCaps_plugin.switchOff();
+                }
+            });
+            return offButton;
+        },
+        
+        _getToggleButton: function(){
+            var toggleButton = $('<a/>', {
+                href: '#',
+                text: 'toggle captions',
+                css: {display: 'none'},
+                click: function(event){
+                    event.preventDefault();
+                    $.jCaps_plugin.toggleCaptions();
+                }
+            });
+            return toggleButton;
+        },
+        
+        _getLanguageDropdown: function(){
             var divs = $(config.transcriptsDiv).children('div[lang^=""]');
             var docLang = $('html').attr('lang');
             
             var dd = $('<select/>', {
                 change: function(){
                     $.jCaps_plugin.switchLanguage($(this).val());
-                }
+                },
+                css: {display: 'none'}
             });
             
             var first = $("<option/>", {
@@ -370,14 +482,14 @@
             return;
         },
         
-        toggle: function(){
+        toggleCaptions: function(){
             config.showCaptions = !config.showCaptions;
             return;
         },
         
         switchLanguage: function(lang){
             config.language = lang;
-            captions = $.jCaps_plugin._init();
+            captions = $.jCaps_plugin._getCaptions();
             return;
         },
         
