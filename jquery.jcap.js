@@ -8,7 +8,7 @@
  * Licensed under the Creative Commons BSD Licence, as per original work
  * http://creativecommons.org/licenses/BSD/
  *
- * Version: 0.1
+ * Version: 0.15 (functional but fugly)
  */
 
 (function($){
@@ -292,6 +292,7 @@
     
     var config = {
         transcriptsDiv: null, // pass a jQuery element as stated in the docs
+        transcriptType: 'html', // support for other methods is planned for the future
         language: $('html').attr('lang'), // should refer to a child div of the above element, with a lang attribute
         languageChooser: true,
         interfaceImg: 'speechbubble.gif',
@@ -313,22 +314,22 @@
             
             if(config.languageChooser){
                 var langDropdown = $.jCaps_plugin._getLanguageDropdown();
-                interfaceDiv.append(langDropdown);
+                interfaceDiv.children('div#jCapsInterface').append(langDropdown);
             }
 
             if(config.toggleButton){
                 var toggleButton = $.jCaps_plugin._getToggleButton();
-                interfaceDiv.append(toggleButton);
+                interfaceDiv.children('div#jCapsInterface').append(toggleButton);
             }
             
             if(config.onButton){
                 var onButton = $.jCaps_plugin._getOnButton();
-                interfaceDiv.append(onButton);
+                interfaceDiv.children('div#jCapsInterface').append(onButton);
             }
             
             if(config.offButton){
                 var offButton = $.jCaps_plugin._getOffButton();
-                interfaceDiv.append(offButton);
+                interfaceDiv.children('div#jCapsInterface').append(offButton);
             }
             
             context.after(interfaceDiv).show();
@@ -339,28 +340,31 @@
         },
         
         _getInterfaceDiv: function(){
-            var showhide = $('<a/>', {
+            var jCapsInterfaceWrapper = $('<div/>', {
+                id: 'jCapsInterfaceWrapper'
+            });
+            
+            var showhide = $('<div/>', {
                 css: {
                     width: '60px',
+                    height: '60px',
                     background: 'url(' + config.interfaceImg + ') no-repeat center left',
                     paddingLeft: '30px'
                 }
             }).toggle(
                 function(){
-                    $(this).next('div').stop().fadeIn(1000);
-                    $(this).stop().show();
+                    $('#jCapsInterface').children().stop().fadeIn(1000);
                 },
                 function(){
-                    $(this).next('div').stop().fadeIn(500);
-                    $(this).stop().hide();
+                    $('#jCapsInterface').children().stop().fadeOut(500);
                 }
-            );
+            ).appendTo(jCapsInterfaceWrapper);
             
             var interfaceDiv = $('<div/>', {
                 id: 'jCapsInterface'
-            }).after(showhide);
+            }).appendTo(jCapsInterfaceWrapper);
             
-            return showhide;
+            return jCapsInterfaceWrapper;
         },
         
         _getCaptions: function(){
