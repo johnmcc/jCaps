@@ -345,8 +345,10 @@
             });
             
             var showhide = $('<div/>', {
+                id: 'jCapsShowHide',
                 css: {
                     width: '60px',
+                    cursor: 'pointer',
                     height: '60px',
                     background: 'url(' + config.interfaceImg + ') no-repeat center left',
                     paddingLeft: '30px'
@@ -502,6 +504,34 @@
             config.transcriptsDiv.children().show();
             config.transcriptsDiv.children('div').not('div[lang="' + config.language + '"]').hide();
             return;
+        },
+        
+        // requires fireunit. http://fireunit.org/
+        tests: function(){
+            if(typeof fireunit === 'object'){
+                
+                fireunit.ok($(config.transcriptsDiv).is(':hidden'), "Transcripts div should be hidden.");
+                fireunit.ok($('#jCapsInterfaceWrapper').length, "#jCapsInterfaceWrapper must exist.");
+                fireunit.ok($('#jCapsInterface').length, "#jCapsInterface must exist.");
+                
+                fireunit.ok(
+                    function(){
+                        return $('#jCapsInterface').children(':hidden').length === $('#jCapsInterface').children().length;
+                    }(),
+                    "jCaps interface elements should be initially hidden"
+                );
+                
+                fireunit.ok(
+                    function(){
+                        var div = $('#jCapsShowHide');
+                        fireunit.click(div);
+                        var retVal = $('#jCapsInterface').children(':hidden').length === 0;
+                        fireunit.click(div);
+                        return retVal;
+                    }(),
+                    "Clicking #jCapsShowHide should show interface elements"
+                );
+            }
         }
     };
     
@@ -518,6 +548,8 @@
                         return $.jCaps_plugin.toggle.call(this);
                     case 'swapOut':
                         return $.jCaps_plugin.swapOut.call(this);
+                    case 'tests':
+                        return $.jCaps_plugin.tests.call(this);
             }
         }
                 
