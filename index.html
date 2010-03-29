@@ -11,26 +11,20 @@
     * Licensed under the Creative Commons BSD Licence, as per original work
     * http://creativecommons.org/licenses/BSD/
     *
-    * Version: 0.15 (functional but fugly)
+    * Version: 0.19 (.srt but scraggy)
     -->
     <title>jCaps plugin example</title>
     <meta charset=utf-8>
         
     <link href="styles.css" rel="stylesheet" />    
     
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js"></script>
     <script src="jquery.jcap.js"></script>
     
     <script>
         $(function(){
-            $("#myVid").jCaps({
-                transcriptsDiv: $('#transcripts'),
-                languageChooser: true
-            });
-	    
-	    $('#myVid').jCaps('tests');
-        })
-        
+            $("#myVid").jCaps();
+        });        
     </script>
 </head>
 <body>
@@ -43,7 +37,9 @@
     </div>
     
     <video id="myVid" width="400" src="leverage-a-synergy.ogv" autobuffer controls> 
-	<p>This page is to demonstrate open HTML5 video, so if you're not using a browser that can display the open Ogg Theora codec, there's not much to see. Sorry!</p> 
+        <track src="transcript-en.srt" type="text/srt" language="en" role="textaudesc"></track>
+        <track src="transcript-ja.srt" type="text/srt" language="ja" role="textaudesc"></track>
+        <p>This page is to demonstrate open HTML5 video, so if you're not using a browser that can display the open Ogg Theora codec, there's not much to see. Sorry!</p> 
     </video>
 
     

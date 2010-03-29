@@ -8,8 +8,10 @@
  * Licensed under the Creative Commons BSD Licence, as per original work
  * http://creativecommons.org/licenses/BSD/
  *
- * Version: 0.15 (functional but fugly)
+ * Version: 0.19 (.srt but scraggy)
  */
+
+"use strict";
 
 (function($){
     var captions = [];
@@ -292,7 +294,7 @@
     
     var config = {
         transcriptsDiv: null, // pass a jQuery element as stated in the docs
-        transcriptType: 'html', // support for other methods is planned for the future
+        transcriptType: 'ajax', // ajax - if using Subrip, html - if using html format
         language: $('html').attr('lang'), // should refer to a child div of the above element, with a lang attribute
         languageChooser: true,
         interfaceImg: 'speechbubble.gif',
@@ -302,7 +304,8 @@
         transcriptButton: true,
         showCaptions: false, // Captions are hidden by default, must be explicitly turned on
         switchOnCallback: function(){}, // called immediately after subtitles are switched on
-        switchOffCallback: function(){} // called immediately after subtitles are switched off
+        switchOffCallback: function(){}, // called immediately after subtitles are switched off
+        debug: false
     };    
     
 
@@ -313,7 +316,7 @@
             var interfaceDiv = $.jCaps_plugin._getInterfaceDiv();
             
             if(config.languageChooser){
-                var langDropdown = $.jCaps_plugin._getLanguageDropdown();
+                var langDropdown = $.jCaps_plugin._getLanguageDropdown(context);
                 interfaceDiv.children('div#jCapsInterface').append(langDropdown);
             }
 
@@ -334,9 +337,14 @@
             
             context.after(interfaceDiv).show();
             
-            $.jCaps_plugin._appendAria(context);
+            // TODO make this work for .srt
+            //$.jCaps_plugin._appendAria(context);
             
-            return $.jCaps_plugin._getCaptions();
+            if(config.debug){
+                $.jCaps_plugin._tests();
+            }
+            
+            return $.jCaps_plugin._getCaptions(context);
         },
         
         _getInterfaceDiv: function(){
@@ -369,26 +377,77 @@
             return jCapsInterfaceWrapper;
         },
         
-        _getCaptions: function(){
-            if(config.transcriptsDiv !== null){    
-                config.transcriptsDiv.hide();
-                var spans = $(config.transcriptsDiv).children('div[lang="' + config.language + '"]').find('span');
-                for(i=0; i<spans.length; ++i){
-                    captions[i] = [];
-                    var $span = $(spans[i]);
-                    captions[i][0] = $span.text();
-                    captions[i][1] = $span.attr('data-begin');
-                    captions[i][2] = $span.attr('data-end');
+        _getCaptions: function(context){
+            if(config.transcriptType == 'ajax'){
+                var track = context.find('track[language="' + config.language + '"]');
+                var type = track.attr('type');
+                switch(type){
+                    case 'text/srt':
+                        var url = track.attr('src');            
+                        $.ajax({
+                            type: 'GET',
+                            url: url,
+                            dataType: "text",
+                            success: function(response){
+                                var captionsArr = response.split('\r\n\r\n');
+                                for(i=0; i<captionsArr.length; ++i){
+                                    var cap = [];
+                                    cap = captionsArr[i].split('\r\n');
+                                    captions[i] = [];
+                                    captions[i][0] = cap[2];
+                                    captions[i][1] =  $.jCaps_plugin._parseTimestamp(cap[1].split('\-\->')[0]);
+                                    captions[i][2] =  $.jCaps_plugin._parseTimestamp(cap[1].split('\-\->')[1]);
+                                }
+                            },
+                            error: function(){
+                                alert('There was a problem retrieving captions for this video.');
+                            },
+                            complete: function(){
+                                if(config.debug){
+                                    fireunit.ok(captions.length > 0, 'Captions array shouldn\'t be empty.');
+                                }
+                            }
+                        });
+                        break;
+                    case "application/ttaf+xml":
+                        alert('todo: timedtext');                    
+                        break;
                 }
-                
-                return captions;
+            }else if(config.transcriptType == 'html'){
+                if(config.transcriptsDiv !== null){
+                    config.transcriptsDiv.hide();
+                    var spans = $(config.transcriptsDiv).children('div[lang="' + config.language + '"]').find('span');
+                    for(i=0; i<spans.length; ++i){
+                        captions[i] = [];
+                        var $span = $(spans[i]);
+                        captions[i][0] = $span.text();
+                        captions[i][1] = $span.attr('data-begin');
+                        captions[i][2] = $span.attr('data-end');
+                    }
+                    
+                    return captions;
+                }
             }
             
-            return false;
+            return captions;
         },
         
+        _parseTimestamp: function(timestr){
+            var ms = timestr.split(/,/)[1];
+            
+            var parts = timestr.split(/,/)[0];
+            
+            var hours = parts.split(/:/)[0];
+            var minutes = parts.split(/:/)[1];
+            var seconds = parts.split(/:/)[2];
+            
+            var totalSeconds = parseInt(hours*60*60, 10) + parseInt(minutes*60, 10) + parseInt(seconds, 10);
+            
+            return parseFloat(totalSeconds+'.'+ms, 10);
+        },
+        
+        /* TODO - make this work for srt format*/
         _appendAria: function(context){
-            if(config.transcriptsDiv.attr('id')){
                 var ids = [];
                 var langDivs = config.transcriptsDiv.children('div');
                 $.each(langDivs, function(i, div){
@@ -403,7 +462,6 @@
                     ids.push(newId);
                 });
                 context.attr('aria-describedby', ids.join(' '));
-            }
         },
         
         _getOnButton: function(){
@@ -445,13 +503,13 @@
             return toggleButton;
         },
         
-        _getLanguageDropdown: function(){
-            var divs = $(config.transcriptsDiv).children('div[lang^=""]');
+        _getLanguageDropdown: function(context){
+            var tracks = context.find('track[language^=""]');
             var docLang = $('html').attr('lang');
             
             var dd = $('<select/>', {
                 change: function(){
-                    $.jCaps_plugin.switchLanguage($(this).val());
+                    $.jCaps_plugin.switchLanguage($(this).val(), context);
                 },
                 css: {display: 'none'}
             });
@@ -461,8 +519,8 @@
                 value: ''
             }).appendTo(dd);
             
-            $.each(divs, function(i, div){
-                var lang = $(div).attr('lang');
+            $.each(tracks, function(i, track){
+                var lang = $(track).attr('language');
                 var option = $('<option/>', {
                     text: languages[lang],
                     value: lang
@@ -493,9 +551,9 @@
             return;
         },
         
-        switchLanguage: function(lang){
+        switchLanguage: function(lang, context){
             config.language = lang;
-            captions = $.jCaps_plugin._getCaptions();
+            captions = $.jCaps_plugin._getCaptions(context);
             return;
         },
         
@@ -506,13 +564,42 @@
             return;
         },
         
-        // requires fireunit. http://fireunit.org/
-        tests: function(){
+        _tests: function(){
             if(typeof fireunit === 'object'){
                 
-                fireunit.ok($(config.transcriptsDiv).is(':hidden'), "Transcripts div should be hidden.");
+                if(config.transcriptType == 'html'){
+                    // html unit tests can go here
+                    // needs to go here because it will fire before ajax response is received; see complete handler in _getCaptions for ajax unit test 
+                    fireunit.ok(captions.length > 0, 'Captions array shouldn\'t be empty.');
+                    fireunit.ok($(config.transcriptsDiv).is(':hidden'), "Transcripts div should be hidden.");
+                    
+                }else if(config.transcriptType == 'subrip'){
+                    // subrip tests go here
+                }
+                
+                // general unit tests go here
                 fireunit.ok($('#jCapsInterfaceWrapper').length, "#jCapsInterfaceWrapper must exist.");
                 fireunit.ok($('#jCapsInterface').length, "#jCapsInterface must exist.");
+                
+                fireunit.ok(
+                    function(){
+                        values = [
+                            ["01:00:03,000", 3603],
+                            ["00:00:55,600", 55.6]
+                        ];
+                        
+                        var retVal = true
+                        
+                        for(var i=0; i<values.length; ++i){
+                            if($.jCaps_plugin._parseTimestamp(values[i][0]) != values[i][1]){
+                                retVal = false;
+                            }
+                        }
+                        
+                        return retVal;
+                    }(), 
+                    "parseTimeStamp should return the expected values"
+                );
                 
                 fireunit.ok(
                     function(){
@@ -531,6 +618,10 @@
                     }(),
                     "Clicking #jCapsShowHide should show interface elements"
                 );
+            }else{
+                if(typeof window.console === 'object'){
+                        window.console.log('Please install FireUnit to view test results. (http://fireunit.org/)');
+                }
             }
         }
     };
@@ -548,8 +639,6 @@
                         return $.jCaps_plugin.toggle.call(this);
                     case 'swapOut':
                         return $.jCaps_plugin.swapOut.call(this);
-                    case 'tests':
-                        return $.jCaps_plugin.tests.call(this);
             }
         }
                 
@@ -588,6 +677,7 @@
                     }
                 });
                 
+                // todo - this is horribly inefficient - track state of subtitles differently
                 if(config.showCaptions){
                     if($('div#captions').is(':hidden')){
                         $('div#captions').show();

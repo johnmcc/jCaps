@@ -7,11 +7,4 @@ http://www.360innovate.co.uk / John McCollum
 Licensed under the Creative Commons BSD Licence, as per original work
 http://creativecommons.org/licenses/BSD/
 
-Version: 0.19 (.srt but scraggy)
-
-Roadmap:
-
-0.20 .srt support, refactored code
-0.30 Interface work for a more usable product
-0.40 Basic TimedText support
-  
+Version: 0.15 (functional but fugly)
