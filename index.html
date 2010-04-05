@@ -13,7 +13,7 @@
     *
     * Version: 0.19 (.srt but scraggy)
     -->
-    <title>jCaps plugin example</title>
+    <title>jCaps plugin example (HTML)</title>
     <meta charset=utf-8>
         
     <link href="styles.css" rel="stylesheet" />    
@@ -23,9 +23,11 @@
     
     <script>
         $(function(){
-            $("#myVid").jCaps();
+            $("#myVid").jCaps({transcriptType: 'html', transcriptsDiv: $('#transcripts')});
         });        
     </script>
+    <!-- uncomment this line to run tests. Be aware that this actually breaks the plugin at the moment! (Specifically, the testDivClick() function)-->
+    <!--<script src="tests.js"></script>-->
 </head>
 <body>
     <h1>HTML5 Video with JavaScripted synchronised captions: demo</h1>
@@ -37,8 +39,6 @@
     </div>
     
     <video id="myVid" width="400" src="leverage-a-synergy.ogv" autobuffer controls> 
-        <track src="transcript-en.srt" type="text/srt" language="en" role="textaudesc"></track>
-        <track src="transcript-ja.srt" type="text/srt" language="ja" role="textaudesc"></track>
         <p>This page is to demonstrate open HTML5 video, so if you're not using a browser that can display the open Ogg Theora codec, there's not much to see. Sorry!</p> 
     </video>
 

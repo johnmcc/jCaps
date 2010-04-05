@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <!--
+    * jCaps - jQuery plugin for caption support in HTML5 video.
+    * Based on an implementation by Bruce Lawson, Philip Jägenstedt, and Daniel Davis:
+    * http://dev.opera.com/articles/view/accessible-html5-video-with-javascripted-captions/
+    *
+    * http://www.360innovate.co.uk / John McCollum
+    *
+    * Licensed under the Creative Commons BSD Licence, as per original work
+    * http://creativecommons.org/licenses/BSD/
+    *
+    * Version: 0.19 (.srt but scraggy)
+    -->
+    <title>jCaps plugin example (HTML)</title>
+    <meta charset=utf-8>
+        
+    <link href="styles.css" rel="stylesheet" />    
+    
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js"></script>
+    <script src="jquery.jcap.js"></script>
+    
+    <script>
+        $(function(){
+            $("#myVid").jCaps();
+        });        
+    </script>
+    <!-- uncomment this line to run tests. Be aware that this actually breaks the plugin at the moment! (Specifically, the testDivClick() function)-->
+    <!--<script src="tests.js"></script>-->
+</head>
+<body>
+    <h1>HTML5 Video with JavaScripted synchronised captions: demo</h1>
+    <p>If your browser has JavaScript enabled, a SubRip file will be ajaxed in.</p>
+    
+    <p>This demonstration supplements the <a href="#">360innovate blog post</a>, and builds on work by Bruce Lawson, Philip Jägenstedt, and Daniel Davis. It reimplements their work as a jQuery plugin which aims to give front-end developers a consistent and easy to use API.</p>
+    <div>
+	
+    </div>
+    
+    <video id="myVid" width="400" src="leverage-a-synergy.ogv" autobuffer controls> 
+        <track src="transcript-en.srt" type="text/srt" language="en" role="textaudesc"></track>
+        <track src="transcript-ja.srt" type="text/srt" language="ja" role="textaudesc"></track>
+        <p>This page is to demonstrate open HTML5 video, so if you're not using a browser that can display the open Ogg Theora codec, there's not much to see. Sorry!</p> 
+    </video>
+</body>
+</html>
