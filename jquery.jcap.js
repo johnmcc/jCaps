@@ -337,7 +337,9 @@
             context.after(interfaceDiv).show();
             
             // TODO make this work for .srt
-            //$.jCaps_plugin._appendAria(context);
+            if(config.transcriptType === 'html'){
+                $.jCaps_plugin._appendAria(context);
+            }
             
             return $.jCaps_plugin._getCaptions(context);
         },
@@ -436,7 +438,6 @@
             return parseFloat(totalSeconds+'.'+ms, 10);
         },
         
-        /* TODO - make this work for srt format*/
         _appendAria: function(context){
                 var ids = [];
                 var langDivs = config.transcriptsDiv.children('div');
@@ -494,9 +495,22 @@
         },
         
         _getLanguageDropdown: function(context){
-            var tracks = context.find('track[language^=""]');
-            var docLang = $('html').attr('lang');
+            var langs = [];
+            switch(config.transcriptType){
+                case 'ajax':
+                    context.find('track[language^=""]').each(function(i, item){
+                        langs.push($(item).attr('language'));
+                    });
+                    break;
+                case 'html':
+                    var tracks = config.transcriptsDiv.children('div');
+                    tracks.each(function(i, item){
+                        langs.push($(item).attr('lang'));
+                    });
+                    break;
+            }
             
+            var docLang = $('html').attr('lang');
             var dd = $('<select/>', {
                 change: function(){
                     $.jCaps_plugin.switchLanguage($(this).val(), context);
@@ -509,8 +523,7 @@
                 value: ''
             }).appendTo(dd);
             
-            $.each(tracks, function(i, track){
-                var lang = $(track).attr('language');
+            $.each(langs, function(i, lang){
                 var option = $('<option/>', {
                     text: languages[lang],
                     value: lang
