@@ -7,8 +7,6 @@
  *
  * Licensed under the Creative Commons BSD Licence, as per original work
  * http://creativecommons.org/licenses/BSD/
- *
- * Version: 0.19 (.srt but scraggy)
  */
 
 "use strict";
@@ -565,6 +563,35 @@
             config.transcriptsDiv.children().show();
             config.transcriptsDiv.children('div').not('div[lang="' + config.language + '"]').hide();
             return;
+        },
+        
+        _update: function(context){
+            var now = context.currentTime;
+            var currentText = '';
+            
+            $.each($.captions, function(i, captionSet){
+                if(now >= captionSet[1] && now <= captionSet[2]){
+                    var newText = captionSet[0];
+                    if(newText !== currentText){
+                        currentText = newText;
+                        $('#captions').text(newText);
+                        return true;
+                    }
+                }
+            });
+            
+            // todo - this is horribly inefficient - track state of subtitles differently
+            if(config.showCaptions){
+                if($('div#captions').is(':hidden')){
+                    $('div#captions').show();
+                    config.switchOnCallback();
+                }
+            }else{
+                if(!$('div#captions').is(':hidden')){
+                    $('div#captions').hide();
+                    config.switchOffCallback();
+                }
+            }
         }
     };
     
@@ -586,9 +613,9 @@
                 
         // main loop. Sort of.
         this.each(function(){
-            var captions = $.jCaps_plugin._init.call(this);
-            var context = $(this);
+            $.jCaps_plugin._init.call(this);
             
+            var context = $(this);
             context.css('position', 'relative');
             
             var wrapper = $('<div/>', { id: 'jCapsWrapper', css: {position: 'relative', display: 'inline'}});
@@ -605,32 +632,7 @@
             }
             
             context.bind('timeupdate', function(){
-                var now = this.currentTime;
-                var currentText = '';
-                
-                $.each(captions, function(i, captionSet){
-                    if(now >= captionSet[1] && now <= captionSet[2]){
-                        var newText = captionSet[0];
-                        if(newText !== currentText){
-                            currentText = newText;
-                            $('#captions').text(newText);
-                            return true;
-                        }
-                    }
-                });
-                
-                // todo - this is horribly inefficient - track state of subtitles differently
-                if(config.showCaptions){
-                    if($('div#captions').is(':hidden')){
-                        $('div#captions').show();
-                        config.switchOnCallback();
-                    }
-                }else{
-                    if(!$('div#captions').is(':hidden')){
-                        $('div#captions').hide();
-                        config.switchOffCallback();
-                    }
-                }
+                $.jCaps_plugin._update(this);
             });
         });
         

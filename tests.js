@@ -8,7 +8,6 @@
  * Licensed under the Creative Commons BSD Licence, as per original work
  * http://creativecommons.org/licenses/BSD/
  *
- * Version: 0.20 (.srt but scraggy)
  */
 
 "use strict";
