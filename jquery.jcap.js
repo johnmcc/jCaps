@@ -565,6 +565,22 @@
             return;
         },
         
+        _amendMarkup: function(context){
+            var wrapper = $('<div/>', { id: 'jCapsWrapper', css: {position: 'relative', display: 'inline'}});
+            context.wrap(wrapper);
+            
+            if(!$('div#captions').length){
+                var div = $('<div/>', {
+                    id: 'captions',
+                    width: context.width(),
+                    css: {display: 'none', position: 'absolute', top: '15px', opacity: 0.7}
+                });
+                $('<p>').appendTo(div);
+                div.appendTo($('#jCapsWrapper'));
+            }
+            return;
+        },
+        
         _update: function(context){
             var now = context.currentTime;
             var currentText = '';
@@ -618,18 +634,7 @@
             var context = $(this);
             context.css('position', 'relative');
             
-            var wrapper = $('<div/>', { id: 'jCapsWrapper', css: {position: 'relative', display: 'inline'}});
-            context.wrap(wrapper);
-            
-            if(!$('div#captions').length){
-                var div = $('<div/>', {
-                    id: 'captions',
-                    width: this.width,
-                    css: {display: 'none', position: 'absolute', top: '15px', opacity: 0.7}
-                });
-                $('<p>').appendTo(div);
-                div.appendTo($('#jCapsWrapper'));
-            }
+            $.jCaps_plugin._amendMarkup(context);
             
             context.bind('timeupdate', function(){
                 $.jCaps_plugin._update(this);
