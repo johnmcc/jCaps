@@ -14,6 +14,7 @@
 (function($){
     $.captions = [];
     
+    // a map of languages, primarily used to create language drop downs
     var languages = {
         "aa": "Afar",
         "ab": "Abkhazian",
@@ -290,24 +291,25 @@
         "zu": "Zulu"
     };
     
+    // defaults, can be overridden when plugin called by client
     var config = {
         transcriptsDiv: null, // pass a jQuery element as stated in the docs
         transcriptType: 'ajax', // ajax - if using Subrip, html - if using html format
-        language: $('html').attr('lang'),
-        languageChooser: true,
-        interfaceImg: 'speechbubble.gif',
-        toggleButton: true,
-        onButton: true,
-        offButton: true,
-        transcriptButton: true,
+        language: $('html').attr('lang'), // default language of captions - set to the <html lang=> by default
+        languageChooser: true, // show language chooser drop down?
+        interfaceImg: 'speechbubble.gif', // Clickable interface background
+        toggleButton: true, // show toggle captions button?
+        onButton: true, // show switch on captions button?
+        offButton: true, // show switch off captions button?
+        transcriptButton: true, // show transcript button? TODO - implement
         showCaptions: false, // Captions are hidden by default, must be explicitly turned on
         switchOnCallback: function(){}, // called immediately after subtitles are switched on
         switchOffCallback: function(){} // called immediately after subtitles are switched off
     };    
     
-
-
+    // Plugin object
     $.jCaps_plugin = {
+        // called when plugin initialised
         _init: function(){
             var context = $(this);
             var interfaceDiv = $.jCaps_plugin._getInterfaceDiv();
@@ -342,6 +344,7 @@
             return $.jCaps_plugin._getCaptions(context);
         },
         
+        // creates initial markup + behaviour for interface
         _getInterfaceDiv: function(){
             var jCapsInterfaceWrapper = $('<div/>', {
                 id: 'jCapsInterfaceWrapper'
@@ -372,6 +375,7 @@
             return jCapsInterfaceWrapper;
         },
         
+        // populates $.captions. Needs Tidying
         _getCaptions: function(context){
             if(config.transcriptType == 'ajax'){
                 var track = context.find('track[language="' + config.language + '"]');
@@ -422,6 +426,7 @@
             return $.captions;
         },
         
+        // parses .srt timestamps. For example, 00:00:06,500 returns 6.5. See tests.js for more examples
         _parseTimestamp: function(timestr){
             var ms = timestr.split(/,/)[1];
             
@@ -436,6 +441,7 @@
             return parseFloat(totalSeconds+'.'+ms, 10);
         },
         
+        // writes ARIA attribute - needs to be implemented for .srt
         _appendAria: function(context){
                 var ids = [];
                 var langDivs = config.transcriptsDiv.children('div');
@@ -581,6 +587,7 @@
             return;
         },
         
+        // called on timeupdate event of video
         _update: function(context){
             var now = context.currentTime;
             var currentText = '';
