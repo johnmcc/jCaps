@@ -304,11 +304,14 @@
         transcriptButton: true, // show transcript button? TODO - implement
         showCaptions: false, // Captions are hidden by default, must be explicitly turned on
         switchOnCallback: function(){}, // called immediately after subtitles are switched on
-        switchOffCallback: function(){} // called immediately after subtitles are switched off
+        switchOffCallback: function(){}, // called immediately after subtitles are switched off
+        captionChangeCallback: function(){} // called on caption change
     };    
     
     // Plugin object
     $.jCaps_plugin = {
+        currentText: '',
+        
         // called when plugin initialised
         _init: function(){
             var context = $(this);
@@ -590,14 +593,15 @@
         // called on timeupdate event of video
         _update: function(context){
             var now = context.currentTime;
-            var currentText = '';
+            
             
             $.each($.captions, function(i, captionSet){
                 if(now >= captionSet[1] && now <= captionSet[2]){
                     var newText = captionSet[0];
-                    if(newText !== currentText){
-                        currentText = newText;
+                    if(newText !== this.currentText){
+                        this.currentText = newText;
                         $('#captions').text(newText);
+                        config.captionChangeCallback();
                         return true;
                     }
                 }
